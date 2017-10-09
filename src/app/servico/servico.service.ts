@@ -2,6 +2,8 @@ import {AngularFireDatabase} from 'angularfire2/database';
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 
+import {isEqual, uniqWith} from 'lodash';
+
 import {Servico} from '../shared/models/servico.model';
 import {ServicoBasic} from '../shared/models/servico-basic.model';
 import {AuthService} from '../auth/auth.service';
@@ -9,6 +11,7 @@ import {AuthService} from '../auth/auth.service';
 export interface Filtro {
   busca: string;
   status: string;
+  cidade: string;
   categoria: number;
 }
 
@@ -18,7 +21,7 @@ export class ServicoService {
   public servicosChanged = new Subject<Servico[]>();
 
   private servicos: Servico[] = [];
-  private filtro: Filtro = this.getFiltroDefault();
+  private filtro: Filtro = ServicoService.getFiltroDefault();
 
 
   constructor(private db: AngularFireDatabase,
@@ -46,13 +49,14 @@ export class ServicoService {
   }
 
   setFiltroDefault() {
-    this.setFiltro(this.getFiltroDefault());
+    this.setFiltro(ServicoService.getFiltroDefault());
   }
 
-  getFiltroDefault() {
+  static getFiltroDefault() {
     return {
       busca: '',
       status: 'disponivel',
+      cidade: '',
       categoria: 0,
       autonomo: true
     }
@@ -76,8 +80,9 @@ export class ServicoService {
       servico => {
         const busca = servico.titulo.search(new RegExp(this.filtro.busca, 'ig')) !== -1;
         const ativo = servico.status === 'disponivel';
+        const cidade = this.filtro.cidade ? servico.endereco.ibge === this.filtro.cidade : true;
         const categoria = this.possuiCategoria(servico.categorias, this.filtro.categoria);
-        return busca && ativo && categoria;
+        return busca && ativo && cidade && categoria;
       }
     );
   }
@@ -177,5 +182,14 @@ export class ServicoService {
       this.db.object('servicos/' + uid + '/candidatos').$ref.push(this.authService.currentUser.uid);
       this.db.object('usuarios/' + this.authService.currentUser.uid + '/servicosInscritos').$ref.push(uid);
     }
+  }
+
+  getCidades() {
+
+    const servicos = this.servicos
+      .filter((servico) => (servico.status === 'disponivel' && servico.endereco.ibge))
+      .map((servico) => ({ibge: servico.endereco.ibge, cidade: servico.endereco.cidade}));
+
+    return uniqWith(servicos, isEqual).sort((a, b) => a.cidade - b.cidade);
   }
 }

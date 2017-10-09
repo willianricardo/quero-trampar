@@ -52,8 +52,8 @@
 
                   <div class="card-body">
                     <blockquote class="blockquote mb-0">
-                      <select class="form-control" (change)="onBuscarServicos()"
-                              formControlName="categoria">
+                      <select title="Busca por área de atuação" class="form-control" (change)="onBuscarServicos()"
+                              [formControlName]="'categoria'">
 
                         <option [value]="0">
                           Selecione uma área de atuação
@@ -70,6 +70,29 @@
                 </div>
               </div>
               <div class="col-sm">
+                <div class="card detalhe-item">
+                  <div class="card-header">
+                    <h4 class="card-title">
+                      Cidade
+                    </h4>
+                  </div>
+
+                  <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                      <select title="Busca por cidade" class="form-control" (change)="onBuscarServicos()"
+                              [formControlName]="'cidade'">
+
+                        <option [value]="''">
+                          Selecione uma Cidade
+                        </option>
+
+                        <option *ngFor="let cidade of servicoService.getCidades()" [value]="cidade.ibge">
+                          {{cidade.cidade}}
+                        </option>
+                      </select>
+                    </blockquote>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

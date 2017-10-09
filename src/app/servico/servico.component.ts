@@ -18,13 +18,14 @@ export class ServicoComponent implements OnInit, OnDestroy {
   servicos: Servico[];
   subscription: Subscription;
 
-  constructor(private servicoService: ServicoService,
+  constructor(protected servicoService: ServicoService,
               protected authService: AuthService,
               private formBuilder: FormBuilder,
               protected coreService: CoreService) {
     this.formulario = this.formBuilder.group({
         status: ['disponivel'],
         busca: [''],
+        cidade: [''],
         categoria: [0]
       }
     );
@@ -49,8 +50,9 @@ export class ServicoComponent implements OnInit, OnDestroy {
   onBuscarServicos() {
     const busca = this.formulario.get('busca').value;
     const categoriaSelect = parseInt(this.formulario.get('categoria').value);
+    const cidadeSelect = this.formulario.get('cidade').value;
 
-    const filtro = {busca: busca, ativo: true, categoria: categoriaSelect, autonomo: true};
+    const filtro = {busca: busca, ativo: true, categoria: categoriaSelect, cidade: cidadeSelect, autonomo: true};
 
     this.servicoService.setFiltro(filtro);
     this.servicos = this.servicoService.getServicos();

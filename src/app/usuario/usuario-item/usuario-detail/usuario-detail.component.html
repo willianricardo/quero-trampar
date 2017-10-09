@@ -133,7 +133,7 @@
             {{usuario.autonomo?'profissional':'solicitante'}}, assim como, opção para visualizar suas áreas de atuação,
             endereço, avaliações, serviços disponibilizados e outras informações</p>
           <hr>
-          <p class="mb-0"><a href="#/login" class="alert-link">Clique aqui!</a> para fazer login.</p>
+          <p class="mb-0"><a routerLink="/login" class="alert-link">Clique aqui!</a> para fazer login.</p>
         </div>
       </ng-template>
 
@@ -192,7 +192,7 @@
             </ng-template>
 
             <ng-template [ngIf]="usuario.fones?.length">
-              <ul class="list-group col-sm-4">
+              <div class="list-group col-sm-4">
                 <a style="padding: 0.5em;font-size: large"
                    href="tel:{{fone}}"
                    class="list-group-item list-group-item-light detalhe-item"
@@ -200,7 +200,7 @@
                   <i class="fa fa-phone fa-1x"></i>
                   <strong>{{coreService.mascaraFone(fone)}}</strong>
                 </a>
-              </ul>
+              </div>
             </ng-template>
           </div>
 

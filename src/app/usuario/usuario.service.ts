@@ -24,7 +24,7 @@ export class UsuarioService {
   public usuariosChanged = new Subject<Usuario[]>();
 
   private usuarios: Usuario[] = [];
-  private filtro: Filtro = this.getFiltroDefault();
+  private filtro: Filtro = UsuarioService.getFiltroDefault();
 
   constructor(private db: AngularFireDatabase,
               private authService: AuthService,
@@ -56,7 +56,7 @@ export class UsuarioService {
     this.filtro = filtro;
   }
 
-  getFiltroDefault() {
+  static getFiltroDefault() {
     return {
       busca: '',
       ativo: true,
@@ -67,7 +67,7 @@ export class UsuarioService {
   }
 
   setFiltroDefault() {
-    this.setFiltro(this.getFiltroDefault());
+    this.setFiltro(UsuarioService.getFiltroDefault());
   }
 
   possuiCategoria(categorias, categoria: number) {
@@ -239,6 +239,6 @@ export class UsuarioService {
       .filter((usuario) => (usuario.autonomo && usuario.ativo && usuario.endereco.ibge))
       .map((usuario) => ({ibge: usuario.endereco.ibge, cidade: usuario.endereco.cidade}));
 
-    return uniqWith(usuarios, isEqual);
+    return uniqWith(usuarios, isEqual).sort((a, b) => a.cidade - b.cidade);
   }
 }

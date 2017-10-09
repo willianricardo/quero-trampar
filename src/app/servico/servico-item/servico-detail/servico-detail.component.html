@@ -126,7 +126,7 @@
           <p>Estando logado, você tem acesso à opção para se candidatar, assim como, visualizar dados do solicitante, áreas de
             atuação, endereço e outras informações</p>
           <hr>
-          <p class="mb-0"><a href="#/login" class="alert-link">Clique aqui!</a> para fazer login.</p>
+          <p class="mb-0"><a routerLink="/login" class="alert-link">Clique aqui!</a> para fazer login.</p>
         </div>
       </ng-template>
 
@@ -151,10 +151,6 @@
           </div>
 
           <div class="form-group detalhe-form-group">
-            <!--<div *ngIf="servico.dataPrevisao" class="form-group col-3" style="margin-bottom: 0px">-->
-            <!--<h5 class="card-title">Data de Cadastro</h5>-->
-            <!--<p class="lead">{{servico.dataCadastro | date:'dd/MM/yyyy'}}</p>-->
-            <!--</div>-->
 
             <div *ngIf="servico.dataPrevisao" class="form-group col-5" style="margin-bottom: 0">
               <h5 class="card-title">Data da Prestação de Serviço</h5>
