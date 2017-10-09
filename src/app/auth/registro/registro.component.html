@@ -1,0 +1,40 @@
+<div class="container detalhe">
+
+  <div class="kpx_login">
+    <h3 class="kpx_authTitle">Registre-se com seu E-mail</h3>
+
+    <div class="row kpx_center">
+      <div class="col-xs-12 col-sm-8">
+        <form [formGroup]="formulario" (ngSubmit)="registroEmail()">
+          <div class="form-group">
+            <div class="form-group">
+              <label class="form-control-static">E-mail</label>
+              <input
+                [ngClass]="aplicaCssErro('email')"
+                class="form-control"
+                type="email"
+                placeholder="seuemail@email.com"
+                formControlName="email">
+            </div>
+
+            <div class="form-group">
+              <label class="form-control-static">Senha</label>
+              <input
+                [ngClass]="aplicaCssErro('senha')"
+                class="form-control"
+                type="password"
+                placeholder="******"
+                formControlName="senha">
+            </div>
+
+            <button class="btn btn-lg btn-outline-info btn-block" type="submit"><i class="fa fa-sign-in"></i> Registrar
+            </button>
+            <br>
+            <a routerLink="/login" routerLinkActive="active">Para voltar a Página de Login, <strong>Clique
+              aqui!</strong></a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

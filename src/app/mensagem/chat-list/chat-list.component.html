@@ -1,0 +1,3 @@
+<nav class="nav flex-column nav-pills">
+  <app-chat-list-item *ngFor="let chat of chats" [chat]="chat.uid" [notificacao]="chat.notificacao" ></app-chat-list-item>
+</nav>

@@ -1,0 +1,63 @@
+.nav-pills .nav-link.active, .show > .nav-pills .nav-link {
+  color: #fff;
+  background-color: #424242 !important
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #edeff2;
+  font-family: "Calibri", "Roboto", sans-serif;
+}
+
+.bottom_wrapper .message_input_wrapper {
+  display: inline-block;
+  height: 100px;
+  border-radius: 15px;
+  border: 1px solid #bcbdc0;
+  width: 100%;
+  position: relative;
+  padding: 0 20px;
+}
+
+.bottom_wrapper .message_input_wrapper .message_input {
+  border: none;
+  height: 100%;
+  box-sizing: border-box;
+  width: calc(100% - 30px);
+  position: absolute;
+  outline-width: 0;
+  color: gray;
+  overflow:hidden;
+  resize:none;
+}
+.bottom_wrapper .send_message {
+  width: 140px;
+  height: 50px;
+  display: inline-block;
+  border-radius: 50px;
+  background-color: #29B6F6;
+  border: 2px solid #29B6F6;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s linear;
+  text-align: center;
+  float: right;
+}
+.bottom_wrapper .send_message:hover {
+  color: #29B6F6;
+  background-color: #fff;
+}
+.bottom_wrapper .send_message .text {
+  font-size: 18px;
+  font-weight: 300;
+  display: inline-block;
+  line-height: 48px;
+}
+
+.message_template {
+  display: none;
+}
+

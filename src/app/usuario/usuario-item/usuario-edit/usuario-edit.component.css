@@ -1,0 +1,10 @@
+div img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.nav-pills .nav-link.active, .show > .nav-pills .nav-link {
+  color: #fff;
+  background-color: #424242 !important
+}

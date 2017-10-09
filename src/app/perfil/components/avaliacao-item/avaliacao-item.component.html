@@ -1,0 +1,20 @@
+<a
+  class="list-group-item list-group-item-action flex-column align-items-start detalhe-form-group"
+  [routerLink]="['/profissionais/'+avaliacao.usuario]">
+  <div class="d-flex w-100 justify-content-between">
+    <h5 class="mb-1">{{usuario?.nome}}</h5>
+    <small>
+      <span class="badge pull-right">
+        <star-rating-comp
+          [starType]="'svg'"
+          [rating]="usuarioService.getMediaAvaliacao(avaliacao)"
+          [readOnly]="true"
+          [step]="0.5"
+          [numOfStars]="5"
+          [showHalfStars]="true">
+        </star-rating-comp>
+      </span>
+    </small>
+  </div>
+  <p class="mb-1">{{avaliacao.texto}}</p>
+</a>

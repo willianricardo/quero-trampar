@@ -1,0 +1,445 @@
+<div class="container detalhe">
+  <form
+    [formGroup]="formulario"
+    class="row"
+    style="margin-top: 3em"
+    (submit)="onSubmit()">
+    <div class="col-sm-3">
+      <div>
+        <img class="rounded img-fluid mx-auto"
+             [src]="formulario.get('foto').value||'https://firebasestorage.googleapis.com/v0/b/querotrampar-1787d.appspot.com/o/icon2-min.jpg?alt=media&token=83b326ee-cf9f-4228-8e39-e0fa0695f15c'">
+      </div>
+      <div *ngIf="authService.isAuthenticated()">
+        <hr>
+        <button class="btn btn-block btn-sm btn-outline-success" type="submit">Salvar</button>
+        <button class="btn btn-block btn-sm btn-outline-danger" type="button" (click)="onReset()">Cancelar</button>
+      </div>
+      <hr>
+      <nav class="nav flex-column nav-pills" id="myTab">
+
+        <a class="btn-outline-dark nav-item nav-link active"
+           id="nav-perfil-tab"
+           data-toggle="tab"
+           href="#nav-perfil"
+           role="tab"
+           aria-controls="nav-perfil">Dados Básicos</a>
+
+        <a *ngIf="formulario.get('autonomo').value"
+           class="btn-outline-dark nav-item nav-link"
+           id="nav-categorias-tab"
+           data-toggle="tab"
+           href="#nav-categorias"
+           role="tab"
+           aria-controls="nav-categorias">Áreas de Atuação</a>
+
+
+        <a class="btn-outline-dark nav-item nav-link"
+           id="nav-contato-tab"
+           data-toggle="tab"
+           href="#nav-contato"
+           role="tab"
+           aria-controls="nav-contato">Contato</a>
+
+        <a class="btn-outline-dark nav-item nav-link"
+           id="nav-endereco-tab"
+           data-toggle="tab"
+           href="#nav-endereco"
+           role="tab"
+           aria-controls="nav-endereco">Endereço</a>
+
+        <a class="btn-outline-dark nav-item nav-link"
+           id="nav-profissionaisfavoritos-tab"
+           data-toggle="tab"
+           href="#nav-profissionaisfavoritos"
+           role="tab"
+           aria-controls="nav-profissionaisfavoritos">Profissionais Favoritos</a>
+
+        <a *ngIf="formulario.get('autonomo').value"
+           class="btn-outline-dark nav-item nav-link"
+           id="nav-servicosinscritos-tab"
+           data-toggle="tab"
+           href="#nav-servicosinscritos"
+           role="tab"
+           aria-controls="nav-servicosinscritos">Serviços com Interesse</a>
+
+        <a class="btn-outline-dark nav-item nav-link"
+           id="nav-observacao-tab"
+           data-toggle="tab"
+           href="#nav-observacao"
+           role="tab"
+           aria-controls="nav-observacao">Outras Informações</a>
+        <hr>
+
+
+      </nav>
+    </div>
+    <div class="col-sm-9">
+
+      <div *ngIf="erro" class="alert alert-danger" role="alert">
+        <button type="button" class="close" aria-label="Close" (click)="erro = null">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="alert-heading">{{erro.cabecalho}}</h4>
+
+        <p>{{erro.descricao}}</p>
+        <ul *ngIf="erro.itens.length">
+          <li *ngFor="let item of erro.itens"><strong>{{getDescricaoCampo(item.campo)}}</strong>
+            <ul>
+              <li *ngFor="let erro of item.erros">{{getDescricaoErro(erro)}}</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-perfil" role="tabpanel" aria-labelledby="nav-perfil-tab">
+          <div class="form-group detalhe-form-group">
+            <h5 class="form-control-label">Nome</h5>
+            <input class="form-control col-sm-12" [ngClass]="aplicaCssErro('nome')" formControlName="nome">
+          </div>
+
+          <div class="form-group detalhe-form-group">
+
+            <div class="form-group">
+              <h5 class="form-control-label">Selecione...</h5>
+              <div
+                class="form-check-inline detalhe-form-group"
+                style="padding: 0.3em 0.8em 0.2em 0.8em"
+                *ngFor="let tipo of coreService.getTipoPessoa()">
+                <label class="form-check-label">
+                  <input class="form-check-input"
+                         type="radio"
+                         formControlName="autonomo"
+                         [value]="tipo.value">
+                  <h5><strong>{{tipo.label}}</strong></h5>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0">
+              <h5 class="form-control-label">CPF/CNPJ</h5>
+              <input class="form-control col-sm-3" [ngClass]="aplicaCssErro('cpf')" formControlName="cpf">
+            </div>
+          </div>
+
+          <div *ngIf="formulario.get('autonomo').value" class="form-group detalhe-form-group">
+            <h5 class="form-control-label">Descrição Profissional</h5>
+            <textarea rows="5" class="form-control" formControlName="descricao"></textarea>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-categorias" role="tabpanel" aria-labelledby="nav-categorias-tab">
+          <div class="form-group detalhe-form-group">
+
+            <h5 class="card-title">Áreas de Atuação</h5>
+
+            <div class="form-group">
+              <div class="input-group col-sm-7" style="padding-left: 0">
+                <select class="form-control" #categoriaSelect>
+
+                  <option [value]="{'uid': 0, 'descricao': 'Selecione uma área de atuação'} | json">
+                    Selecione um serviço
+                  </option>
+
+                  <optgroup *ngFor="let categoria of coreService.getCategorias()" [label]="categoria.descricao">
+                    <option *ngFor="let item of categoria.itens" [value]="item| json">
+                      {{item.descricao}}
+                    </option>
+                  </optgroup>
+
+                </select>
+                <span class="input-group-btn">
+                <button
+                  class="btn btn-success"
+                  type="button"
+                  (click)="adicionarCategoria(categoriaSelect.value)">
+                  Adicionar
+                </button>
+              </span>
+              </div>
+            </div>
+
+            <ng-template [ngIf]="!formulario.get('categorias')?.length">
+              <div class="alert alert-secondary" role="alert">
+                Nenhuma área de atuação informada
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="formulario.get('categorias')?.length">
+              <ul class="list-group col-sm-7">
+                <div formArrayName="categorias">
+                  <div *ngFor="let categoria of formulario.get('categorias').controls; let i=index">
+                    <div style="margin-bottom: 5px;">
+                      <div class="input-group" formGroupName="{{i}}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button"><i class="fa fa-star fa-1x"></i></button>
+                        </span>
+                        <li style="color: #818182!important;"
+                            class="form-control list-group-item-action flex-column list-group-item-light"
+                            readonly>
+                          <strong>{{categoria.controls.descricao.value}}</strong>
+                        </li>
+                        <span class="input-group-btn">
+                          <button class="btn btn-danger" type="button" (click)="excluirCategoria(i)">Excluir</button>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ul>
+            </ng-template>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-contato" role="tabpanel" aria-labelledby="nav-contato-tab">
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">E-mail</h5>
+            <input type="email" class="form-control col-sm-7" [ngClass]="aplicaCssErro('email')"
+                   formControlName="email">
+          </div>
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Fones</h5>
+
+            <div class="form-group ">
+              <div class="input-group col-sm-5" style="padding-left: 0">
+                <input class="form-control" placeholder="(XX) XXXXX-XXXX" type="tel" #foneInput>
+                <span class="input-group-btn">
+                <button
+                  class="btn btn-success"
+                  type="button"
+                  (click)="adicionarFone()">
+                  Adicionar
+                </button>
+              </span>
+              </div>
+            </div>
+
+            <ng-template [ngIf]="!formulario.get('fones')?.length">
+              <div class="alert alert-secondary" role="alert">
+                Nenhum fone informado
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="formulario.get('fones')?.length">
+              <ul class="list-group col-sm-5">
+                <div formArrayName="fones">
+                  <div *ngFor="let fone of formulario.get('fones').controls; let i=index">
+                    <div class="input-group" style="margin-bottom: 5px;">
+                      <span class="input-group-btn">
+                        <button class="btn btn-secondary" type="button"><i class="fa fa-phone fa-1x"></i></button>
+                      </span>
+                      <li style="color: #818182!important;"
+                          class="form-control list-group-item-action flex-column list-group-item-light"
+                          readonly>
+                        <strong>{{coreService.mascaraFone(fone.value)}}</strong>
+                      </li>
+                      <span class="input-group-btn">
+                        <button class="btn btn-danger" type="button" (click)="excluirFone(i)">Excluir</button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </ul>
+            </ng-template>
+          </div>
+
+          <div class="form-group detalhe-form-group">
+
+            <h5 class="card-title">Links</h5>
+
+            <div class="form-group">
+              <div class="input-group col-sm-12">
+                <select class="form-control col-sm-2" #linkSelect>
+                  <option *ngFor="let link of coreService.getLinks()" [value]="link|json">
+                    {{link.nome}}
+                  </option>
+                </select>
+                <input type="url" class="form-control col-sm-10" #urlInput>
+                <span class="input-group-btn">
+                  <button
+                    class="btn btn-success"
+                    type="button"
+                    (click)="adicionarLink(linkSelect.value)">
+                    Adicionar
+                  </button>
+                </span>
+              </div>
+            </div>
+
+            <ng-template [ngIf]="!formulario.get('links')?.length">
+              <div class="alert alert-secondary" role="alert">
+                Nenhuma link informado
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="formulario.get('links')?.length">
+              <ul class="list-group col-sm-12">
+                <div formArrayName="links">
+                  <div *ngFor="let link of formulario.get('links').controls; let i=index">
+                    <div class="input-group" style="margin-bottom: 5px;" formGroupName="{{i}}">
+                        <span class="input-group-btn">
+                          <button type="button" class="btn btn-secondary"
+                                  [ngClass]="coreService.aplicaCssLinkButton(link.controls.tipo.value)">
+                            <i class="fa fa-1x" [ngClass]="coreService.aplicaCssLinkIcon(link.controls.tipo.value)"></i>
+                          </button>
+                        </span>
+                      <li style="color: #818182!important;"
+                          class="form-control list-group-item-action flex-column list-group-item-light"
+                          readonly>
+                        <strong>{{link.controls.url.value}}</strong>
+                      </li>
+                      <span class="input-group-btn">
+                        <button class="btn btn-danger"
+                                type="button"
+                                (click)="excluirLink(i)">
+                          Excluir
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </ul>
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="nav-endereco" role="tabpanel" aria-labelledby="nav-endereco-tab">
+          <div class="form-group" formGroupName="endereco">
+
+            <div class="form-group detalhe-form-group">
+              <h4 class="form-control-label" style="padding-bottom: 0.5em">Endereço</h4>
+              <div class="row">
+                <div class="form-group col-9">
+                  <h5 class="form-control-label">Rua</h5>
+                  <input class="form-control" formControlName="rua">
+                </div>
+
+                <div class="form-group col-3">
+                  <h5 class="form-control-label">Numero</h5>
+                  <input class="form-control" formControlName="numero">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group col-5">
+                  <h5 class="form-control-label">Bairro</h5>
+                  <input class="form-control" formControlName="bairro">
+                </div>
+
+                <div class="form-group  col-7">
+                  <h5 class="form-control-label">Complemento</h5>
+                  <input class="form-control" formControlName="complemento">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group col-sm-12">
+                  <h5 class="form-control-label">Cidade</h5>
+                  <input class="form-control" formControlName="cidade">
+                </div>
+
+                <div class="form-group  col-3">
+                  <h5 class="form-control-label">CEP</h5>
+                  <input class="form-control" (blur)="consultaCEP()" formControlName="cep">
+                </div>
+
+                <div class="form-group  col-3">
+                  <h5 class="form-control-label">Estado</h5>
+                  <select class="form-control" formControlName="estado">
+                    <option *ngFor="let estado of coreService.getEstados()" [value]="estado.uf">
+                      {{estado.nome}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!--<div class="form-group detalhe-form-group col-12">-->
+            <!--<h5 class="card-title">Localização</h5>-->
+            <!--<div id="maps"></div>-->
+            <!--</div>-->
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-profissionaisfavoritos" role="tabpanel"
+             aria-labelledby="nav-profissionaisfavoritos-tab">
+          <div class="form-group detalhe-form-group">
+
+            <h5 class="card-title">Profissionais favoritos</h5>
+
+            <ng-template [ngIf]="!formulario.get('favoritos')?.value">
+              <div class="alert alert-secondary" role="alert">
+                Nenhum profissional favoritado
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="formulario.get('favoritos')?.value">
+              <ul class="list-group col-sm-8">
+                <div
+                  *ngFor="let profissional of coreService.getValuesFromObject(formulario.controls['favoritos'].value); let i=index">
+                  <div formGroupName="favoritos">
+                    <app-perfil-edit-profissional-favorito
+                      [uid]="profissional">
+                    </app-perfil-edit-profissional-favorito>
+                  </div>
+                </div>
+              </ul>
+            </ng-template>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-servicosinscritos" role="tabpanel"
+             aria-labelledby="nav-servicosinscritos-tab">
+          <div class="form-group detalhe-form-group">
+
+            <h5 class="card-title">Serviços com Interesse</h5>
+
+            <ng-template [ngIf]="!formulario.get('servicosInscritos')?.value">
+              <div class="alert alert-secondary" role="alert">
+                Nenhum serviço com interesse
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="formulario.get('servicosInscritos')?.value">
+              <ul class="list-group col-sm-8">
+                <div
+                  *ngFor="let servico of coreService.getValuesFromObject(formulario.controls['servicosInscritos'].value); let i=index">
+                  <div formGroupName="servicosInscritos">
+                    <app-perfil-edit-servico-inscrito
+                      [uid]="servico">
+                    </app-perfil-edit-servico-inscrito>
+                  </div>
+                </div>
+              </ul>
+            </ng-template>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-observacao" role="tabpanel" aria-labelledby="nav-observacao-tab">
+          <div *ngIf="formulario.get('autonomo').value" class="form-group detalhe-form-group">
+            <h5 class="form-control-label">
+              Aceita pagamento com cartão?
+            </h5>
+            <div class="form-check-inline" *ngFor="let option of coreService.getOptionSimOuNao()">
+              <label class="form-check-label">
+                <input class="form-check-input"
+                       type="radio"
+                       formControlName="aceitaCartao"
+                       [value]="option.value">
+                {{option.label}}
+              </label>
+            </div>
+          </div>
+
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="form-control-label">
+              Observação
+            </h5>
+            <textarea rows="12" class="form-control" formControlName="observacao"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+

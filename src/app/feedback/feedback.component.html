@@ -1,0 +1,13 @@
+<div class="container ">
+  <div class="jumbotron">
+    <h1><strong>QueroTrampar</strong></h1>
+    <p class="lead">Feedbacks enviados pelos usuários</p>
+  </div>
+
+  <div class="card-columns">
+    <app-feedback-item
+      *ngFor="let feedback of feedbacks"
+      [feedback]="feedback">
+    </app-feedback-item>
+  </div>
+</div>

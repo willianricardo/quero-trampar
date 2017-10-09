@@ -1,0 +1,80 @@
+<div class="container detalhe">
+  <div class="kpx_login">
+    <h3 class="kpx_authTitle">Entre com suas Redes Sociais</h3>
+    <div class="row kpx_socialButtons kpx_center">
+      <div class="col-xs-2 col-sm-2">
+        <a (click)="loginFacebook()" class="btn btn-lg btn-block kpx_btn-facebook" data-toggle="tooltip" data-placement="top"
+           title="Facebook">
+          <i class="fa fa-facebook fa-2x"></i>
+          <span class="hidden-xs"></span>
+        </a >
+      </div>
+      <div class="col-xs-2 col-sm-2">
+        <a (click)="loginTwitter()" class="btn btn-lg btn-block kpx_btn-twitter" data-toggle="tooltip" data-placement="top"
+           title="Twitter">
+          <i class="fa fa-twitter fa-2x"></i>
+          <span class="hidden-xs"></span>
+        </a>
+      </div>
+      <div class="col-xs-2 col-sm-2">
+        <a (click)="loginGoogle()" class="btn btn-lg btn-block kpx_btn-google-plus" data-toggle="tooltip" data-placement="top"
+           title="Google">
+          <i class="fa fa-google fa-2x"></i>
+          <span class="hidden-xs"></span>
+        </a>
+      </div>
+      <div class="col-xs-2 col-sm-2">
+        <a (click)="loginGitHub()" class="btn btn-lg btn-block kpx_btn-github" data-toggle="tooltip" data-placement="top"
+           title="GitHub">
+          <i class="fa fa-github fa-2x"></i>
+          <span class="hidden-xs"></span>
+        </a>
+      </div>
+    </div>
+    <br>
+
+    <div class="row kpx_loginOr kpx_center">
+      <div class="col-xs-12 col-sm-8">
+        <hr class="kpx_hrOr">
+        <span class="kpx_spanOr">ou</span>
+      </div>
+    </div>
+
+    <h3 class="kpx_authTitle">Com seu E-mail</h3>
+
+    <div class="row kpx_center">
+      <div class="col-xs-12 col-sm-8">
+
+        <form [formGroup]="formulario" (ngSubmit)="loginEmail()">
+          <div class="form-group">
+            <div class="form-group">
+              <label class="form-control-static">E-mail</label>
+              <input
+                [ngClass]="aplicaCssErro('email')"
+                class="form-control"
+                type="email"
+                placeholder="seuemail@email.com"
+                formControlName="email">
+            </div>
+
+            <div class="form-group">
+              <label class="form-control-static">Senha</label>
+              <input
+                [ngClass]="aplicaCssErro('senha')"
+                class="form-control"
+                type="password"
+                placeholder="******"
+                formControlName="senha">
+            </div>
+
+            <button class="btn btn-lg btn-outline-primary btn-block" type="submit"><i class="fa fa-sign-in"></i> Login</button>
+            <br>
+            <a routerLink="/registro" routerLinkActive="active">Não possui uma conta? <strong>Registre-se
+              aqui!</strong></a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>

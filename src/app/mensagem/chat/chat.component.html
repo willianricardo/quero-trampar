@@ -1,0 +1,38 @@
+<div class="chat_window">
+  <ul class="messages" #divMensagens>
+    <li
+      *ngFor="let mensagem of mensagens"
+      class="message appeared"
+      [ngClass]="({'right':isMe(mensagem.usuario), 'left':!isMe(mensagem.usuario)})">
+      <div class="avatar"></div>
+      <div class="text_wrapper">
+        <div class="text">
+          <small class="pull-right"><strong>{{getData(mensagem.timestamp) | amTimeAgo}}</strong></small>
+          {{mensagem.texto}}
+        </div>
+      </div>
+    </li>
+  </ul>
+  <div class="bottom_wrapper clearfix">
+    <div class="message_input_wrapper">
+      <input
+        #mensagemInput
+        class="message_input"
+        (keyup.enter)="onEnviarMensagem()"
+        placeholder="Digite sua mensagem aqui..."/>
+    </div>
+    <div class="send_message" (click)="onEnviarMensagem()">
+      <div class="icon"></div>
+      <div class="text">Enviar
+      </div>
+    </div>
+  </div>
+</div>
+<div class="message_template">
+  <li class="message">
+    <div class="avatar"></div>
+    <div class="text_wrapper">
+      <div class="text"></div>
+    </div>
+  </li>
+</div>

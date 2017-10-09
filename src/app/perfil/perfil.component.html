@@ -1,0 +1,443 @@
+<div class="container detalhe">
+  <div class="row" style="margin-top: 3em">
+    <div class="col-sm-3">
+      <div>
+        <img class="rounded img-fluid mx-auto"
+             [src]="usuario?.foto||'https://firebasestorage.googleapis.com/v0/b/querotrampar-1787d.appspot.com/o/icon2-min.jpg?alt=media&token=83b326ee-cf9f-4228-8e39-e0fa0695f15c'"/>
+      </div>
+      <div *ngIf="authService.isAuthenticated()">
+        <hr>
+        <a class="btn btn-block btn-sm btn-outline-warning"
+           routerLink="/perfil/alterar"
+           routerLinkActive="active">Alterar</a>
+        <button
+          *ngIf="usuario.ativo && !authService.isAdministratorWithUID(usuario.uid)"
+          class="btn btn-block btn-sm btn-outline-danger"
+          type="button"
+          data-toggle="modal"
+          data-target="#desativarPerfil"
+          data-whatever="@mdo">Desativar Perfil
+        </button>
+      </div>
+      <hr>
+      <nav class="nav flex-column nav-pills" id="myTab">
+
+        <a class="btn-outline-dark nav-item nav-link active"
+           id="nav-perfil-tab"
+           data-toggle="tab"
+           href="#nav-perfil"
+           role="tab"
+           aria-controls="nav-perfil">Dados Básicos</a>
+
+        <a *ngIf="usuario.autonomo"
+           class="btn-outline-dark nav-item nav-link"
+           id="nav-categorias-tab"
+           data-toggle="tab"
+           href="#nav-categorias"
+           role="tab"
+           aria-controls="nav-categorias">Áreas de Atuação</a>
+
+
+        <a class="btn-outline-dark nav-item nav-link"
+           id="nav-contato-tab"
+           data-toggle="tab"
+           href="#nav-contato"
+           role="tab"
+           aria-controls="nav-contato">Contato</a>
+
+        <a class="btn-outline-dark nav-item nav-link"
+           id="nav-endereco-tab"
+           data-toggle="tab"
+           href="#nav-endereco"
+           role="tab"
+           aria-controls="nav-endereco">Endereço</a>
+
+        <a *ngIf="usuario.autonomo"
+           class="btn-outline-dark nav-item nav-link"
+           id="nav-avaliacao-tab"
+           data-toggle="tab"
+           href="#nav-avaliacao"
+           role="tab"
+           aria-controls="nav-avaliacao">Avaliação</a>
+
+        <a class="btn-outline-dark nav-item nav-link"
+           id="nav-profissionaisfavoritos-tab"
+           data-toggle="tab"
+           href="#nav-profissionaisfavoritos"
+           role="tab"
+           aria-controls="nav-profissionaisfavoritos">Profissionais Favoritos</a>
+
+        <a *ngIf="usuario.autonomo"
+           class="btn-outline-dark nav-item nav-link"
+           id="nav-servicosinscritos-tab"
+           data-toggle="tab"
+           href="#nav-servicosinscritos"
+           role="tab"
+           aria-controls="nav-servicosinscritos">Serviços com Interesse</a>
+
+        <a class="btn-outline-dark nav-item nav-link"
+           id="nav-servicosdisponibilizados-tab"
+           data-toggle="tab"
+           href="#nav-servicosdisponibilizados"
+           role="tab"
+           aria-controls="nav-servicosdisponibilizados">Serviços Disponibilizados</a>
+
+        <a class="btn-outline-dark nav-item nav-link"
+           id="nav-observacao-tab"
+           data-toggle="tab"
+           href="#nav-observacao"
+           role="tab"
+           aria-controls="nav-observacao">Outras Informações</a>
+        <hr>
+      </nav>
+    </div>
+    <div class="col-sm-9">
+
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-perfil" role="tabpanel" aria-labelledby="nav-perfil-tab">
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Nome</h5>
+            <h3>{{usuario.nome}}</h3>
+          </div>
+
+          <div *ngIf="usuario.cpf" class="form-group detalhe-form-group">
+            <h5 class="card-title">{{usuario.cpf.length <= 11? 'CPF':'CNPJ'}}</h5>
+            <p class="lead">{{coreService.mascaraCpfCnpj(usuario.cpf)}}</p>
+          </div>
+
+          <div *ngIf="usuario.autonomo"
+               class="form-group detalhe-form-group">
+            <h5 class="card-title">Descrição Profissional</h5>
+            <p class="lead">“{{usuario.descricao || 'Sem descrição informada'}}”</p>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="nav-categorias" role="tabpanel" aria-labelledby="nav-categorias-tab">
+          <div class="form-group detalhe-form-group">
+
+            <h5 class="card-title">Áreas de Atuação</h5>
+
+            <ng-template [ngIf]="!usuario.categorias?.length">
+              <div class="alert alert-secondary" role="alert">
+                Nenhuma área de atuação informada
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="usuario.categorias?.length">
+              <ul class="list-group col-sm-6">
+                <li style="padding: 0.5em;font-size: large"
+                    class="list-group-item list-group-item-light detalhe-item"
+                    *ngFor="let categoria of usuario.categorias">
+                  <i class="fa fa-star fa-1x"></i>
+                  <strong>{{categoria.descricao}}</strong>
+                </li>
+              </ul>
+            </ng-template>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-contato" role="tabpanel" aria-labelledby="nav-contato-tab">
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">E-mail</h5>
+            <p class="lead">{{usuario.email|lowercase}}</p>
+          </div>
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Fones</h5>
+            <ng-template [ngIf]="!usuario.fones?.length">
+              <div class="alert alert-secondary" role="alert">
+                Nenhum contato informado
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="usuario.fones?.length">
+              <ul class="list-group col-sm-4">
+                <a style="padding: 0.5em;font-size: large"
+                   href="tel:{{fone}}"
+                   class="list-group-item list-group-item-light detalhe-item"
+                   *ngFor="let fone of usuario.fones">
+                  <i class="fa fa-phone fa-1x"></i>
+                  <strong>{{coreService.mascaraFone(fone)}}</strong>
+                </a>
+              </ul>
+            </ng-template>
+          </div>
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Links</h5>
+            <ng-template [ngIf]="!usuario.links?.length">
+              <div class="alert alert-secondary" role="alert">
+                Nenhum link informado
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="usuario.links?.length">
+              <div class="btn-group btn-group-lg" role="group">
+                <a [href]="link.url"
+                   target="_blank"
+                   [title]="link.nome"
+                   class="btn btn-secondary list-group-item-action"
+                   [ngClass]="coreService.aplicaCssLinkListGroupItem(link.tipo)"
+                   *ngFor="let link of usuario.links">
+                  <i class="fa fa-2x" [ngClass]="coreService.aplicaCssLinkIcon(link.tipo)"></i>
+                </a>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-endereco" role="tabpanel" aria-labelledby="nav-endereco-tab">
+
+          <ng-template
+            [ngIf]="!usuario.endereco?.rua && !usuario.endereco?.cidade && !usuario.endereco?.complemento && !usuario.endereco?.maps.lat">
+            <h5 class="card-title">Endereço</h5>
+            <div class="alert alert-secondary" role="alert">
+              Endereço não informado
+            </div>
+          </ng-template>
+
+          <div *ngIf="usuario.endereco?.rua"
+               class="form-group detalhe-form-group">
+            <h5 class="card-title">Endereço</h5>
+            <p class="lead"> {{usuario.endereco?.rua}}{{usuario.endereco?.numero?', '+
+              usuario.endereco?.numero:''}} - {{usuario.endereco?.bairro}}</p>
+          </div>
+
+          <div *ngIf="usuario.endereco?.cidade"
+               class="form-group detalhe-form-group">
+            <h5 class="card-title">Cidade</h5>
+            <p class="lead"> {{usuario.endereco?.cidade}}, {{usuario.endereco?.cep}} -
+              {{usuario.endereco?.estado | uppercase}}</p>
+          </div>
+
+          <div *ngIf="usuario.endereco?.complemento"
+               class="form-group detalhe-form-group">
+            <h5 class="card-title">Complemento</h5>
+            <p class="lead"> {{usuario.endereco?.complemento}}</p>
+          </div>
+
+          <div *ngIf="usuario.endereco?.maps.lat" class="form-group detalhe-form-group">
+            <h5 class="card-title">Localização</h5>
+            <div id="maps" #maps></div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-avaliacao" role="tabpanel" aria-labelledby="nav-avaliacao-tab">
+
+          <ng-template [ngIf]="usuario.avaliacoes">
+            <div class="form-group detalhe-form-group">
+              <h5 class="card-title">Nota</h5>
+              <div class="container">
+                <div class="row">
+                  <div class="col-sm detalhe-item">
+                    <star-rating-comp
+                      [starType]="'svg'"
+                      [rating]="usuarioService.getMediaAvaliacoes(usuario.avaliacoes)"
+                      [readOnly]="true"
+                      [step]="0.5"
+                      [numOfStars]="5"
+                      [showHalfStars]="true">
+                    </star-rating-comp>
+                  </div>
+                </div>
+              </div>
+              <div class="container">
+                <div class="row">
+                  <div class="col-sm detalhe-item">
+                    <star-rating-comp
+                      [starType]="'svg'"
+                      [rating]="usuarioService.getMediaAvaliacaoServico(this.coreService.getValuesFromObject(usuario.avaliacoes))"
+                      [labelPosition]="'top'"
+                      [labelText]="'Serviço'"
+                      [readOnly]="true"
+                      [step]="0.5"
+                      [numOfStars]="5"
+                      [showHalfStars]="true">
+                    </star-rating-comp>
+                  </div>
+
+                  <div class="col-sm detalhe-item">
+                    <star-rating-comp
+                      [starType]="'svg'"
+                      [rating]="usuarioService.getMediaAvaliacaoPreco(this.coreService.getValuesFromObject(usuario.avaliacoes))"
+                      [labelPosition]="'top'"
+                      [labelText]="'Preço'"
+                      [readOnly]="true"
+                      [step]="0.5"
+                      [numOfStars]="5"
+                      [showHalfStars]="true">
+                    </star-rating-comp>
+                  </div>
+                  <div class="col-sm detalhe-item">
+                    <star-rating-comp
+                      [starType]="'svg'"
+                      [rating]="usuarioService.getMediaAvaliacaoAtendimento(this.coreService.getValuesFromObject(usuario.avaliacoes))"
+                      [labelPosition]="'top'"
+                      [labelText]="'Atendimento'"
+                      [readOnly]="true"
+                      [step]="0.5"
+                      [numOfStars]="5"
+                      [showHalfStars]="true">
+                    </star-rating-comp>
+                  </div>
+                  <div class="col-sm detalhe-item">
+                    <star-rating-comp
+                      [starType]="'svg'"
+                      [rating]="usuarioService.getMediaAvaliacaoApresentacao(this.coreService.getValuesFromObject(usuario.avaliacoes))"
+                      [labelPosition]="'top'"
+                      [labelText]="'Apresentação'"
+                      [readOnly]="true"
+                      [step]="0.5"
+                      [numOfStars]="5"
+                      [showHalfStars]="true">
+                    </star-rating-comp>
+                  </div>
+                  <div class="col-sm detalhe-item">
+                    <star-rating-comp
+                      [starType]="'svg'"
+                      [rating]="usuarioService.getMediaAvaliacaoPontualidade(this.coreService.getValuesFromObject(usuario.avaliacoes))"
+                      [labelPosition]="'top'"
+                      [labelText]="'Pontualidade'"
+                      [readOnly]="true"
+                      [step]="0.5"
+                      [numOfStars]="5"
+                      [showHalfStars]="true">
+                    </star-rating-comp>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Avaliação</h5>
+            <ng-template [ngIf]="!usuario.avaliacoes">
+              <div class="alert alert-secondary" role="alert">
+                Nenhuma avaliação Disponível
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="usuario.avaliacoes">
+              <app-avaliacao-item
+                *ngFor="let avaliacao of coreService.getValuesFromObject(usuario.avaliacoes)"
+                [avaliacao]="avaliacao">
+              </app-avaliacao-item>
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="nav-profissionaisfavoritos" role="tabpanel"
+             aria-labelledby="nav-profissionaisfavoritos-tab">
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Profissionais favoritos</h5>
+            <ng-template [ngIf]="!usuario.favoritos">
+              <div class="alert alert-secondary" role="alert">
+                Nenhum profissional favoritado
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="usuario.favoritos">
+              <ul class="list-group col-sm-7">
+                <app-perfil-profissional-favorito
+                  *ngFor="let profissional of coreService.getValuesFromObject(usuario.favoritos)"
+                  [uid]="profissional">
+                </app-perfil-profissional-favorito>
+              </ul>
+            </ng-template>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-servicosinscritos" role="tabpanel"
+             aria-labelledby="nav-servicosinscritos-tab">
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Serviços com Interesse</h5>
+
+            <ng-template [ngIf]="!usuario.servicosInscritos">
+              <div class="alert alert-secondary" role="alert">
+                Nenhum serviço com interesse
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="usuario.servicosInscritos">
+              <ul class="list-group col-sm-7">
+                <app-perfil-servico-disponibilizado
+                  *ngFor="let servico of coreService.getValuesFromObject(usuario.servicosInscritos)"
+                  [uid]="servico">
+                </app-perfil-servico-disponibilizado>
+              </ul>
+            </ng-template>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-servicosdisponibilizados" role="tabpanel"
+             aria-labelledby="nav-servicosdisponibilizados-tab">
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Serviços Disponibilizados</h5>
+
+            <ng-template [ngIf]="!usuario.servicosDisponibilizados">
+              <div class="alert alert-secondary" role="alert">
+                Nenhum serviço disponibilizado
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="usuario.servicosDisponibilizados">
+              <ul class="list-group col-sm-7">
+                <app-perfil-servico-disponibilizado
+                  *ngFor="let servico of coreService.getValuesFromObject(usuario.servicosDisponibilizados)"
+                  [uid]="servico">
+                </app-perfil-servico-disponibilizado>
+              </ul>
+            </ng-template>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-observacao" role="tabpanel" aria-labelledby="nav-observacao-tab">
+
+          <div *ngIf="usuario.autonomo"
+               class="form-group detalhe-form-group">
+            <h5 class="form-control-label">
+              Aceita pagamento com cartão?
+            </h5>
+
+            <div class="form-check-inline">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" [checked]="usuario.aceitaCartao" disabled>
+                Sim
+              </label>
+            </div>
+            <div class="form-check-inline">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" [checked]="!usuario.aceitaCartao" disabled>
+                Não
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Observação</h5>
+            <p class="lead">“{{usuario.observacao || 'Nenhuma observação disponível'}}”</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="desativarPerfil" tabindex="-1" role="dialog" aria-labelledby="desativarPerfilLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content alert alert-danger">
+      <div class="modal-header alert alert-danger">
+        <h5 class="modal-title alert-heading" id="desativarPerfilLabel">Atenção</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Deseja realmente desativar seu perfil?</p>
+        <hr>
+        <p class="mb-0">Seu perfil não poderá ser ativado novamente!</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+        <button class="btn btn-outline-danger" data-dismiss="modal" (click)="desativar()">Desativar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

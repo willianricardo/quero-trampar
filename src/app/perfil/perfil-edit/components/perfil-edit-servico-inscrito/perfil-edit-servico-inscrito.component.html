@@ -1,0 +1,14 @@
+<div class="input-group" style="margin-bottom: 5px">
+  <span class="input-group-btn">
+    <button class="btn btn-secondary" type="button"><i class="fa fa-star fa-1x"></i></button>
+  </span>
+  <a [routerLink]="['/servicos/'+servico?.uid]" routerLinkActive="active"
+     class="form-control list-group-item-action flex-column list-group-item-light" readonly>
+    <strong>{{servico?.titulo}}</strong>
+  </a>
+  <span class="input-group-btn">
+    <button class="btn btn-danger" type="button" (click)="desinscrever()">
+      Deixar Interesse
+    </button>
+  </span>
+</div>

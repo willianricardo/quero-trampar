@@ -1,0 +1,95 @@
+<div class="container">
+  <form [formGroup]="formulario">
+    <div class="jumbotron">
+      <h1><strong>QueroTrampar</strong></h1>
+      <p class="lead">Encontre aqui os Melhores Serviços disponíveis em sua Região.</p>
+
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control input-busca"
+          placeholder="Encontre aqui..."
+          formControlName="busca"
+          (keyup.enter)="onBuscarServicos()">
+        <a id="buttonFiltrar"
+           class="btn btn-lg btn-outline-secondary dropdown-toggle"
+           data-toggle="collapse"
+           data-parent="#filtroServico"
+           href="#filtros"
+           style="border-radius: 0; border:1px solid rgba(0,0,0,.15); border-left: 0;"
+           aria-expanded="false"
+           aria-controls="filtros">
+        </a>
+        <span class="input-group-btn">
+          <button
+            class="btn btn-lg btn-secondary"
+            type="button"
+            (click)="onBuscarServicos()">Buscar
+          </button>
+        </span>
+      </div>
+      <div id="filtroProfissional" data-children=".item">
+        <div class="item">
+
+          <div id="filtros" class="collapse" role="tabpanel">
+            <div class="form-group"
+                 style="margin-top: 10px; margin-bottom: 0;">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                (click)="limparFiltro()">Remover Filtros
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="row" style="margin-top: 10px;">
+              <div class="col-sm">
+                <div class="card detalhe-item">
+                  <div class="card-header">
+                    <h4 class="card-title">
+                      Área de Atuação
+                    </h4>
+                  </div>
+
+                  <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                      <select class="form-control" (change)="onBuscarServicos()"
+                              formControlName="categoria">
+
+                        <option [value]="0">
+                          Selecione uma área de atuação
+                        </option>
+
+                        <optgroup *ngFor="let categoria of coreService.getCategorias()" [label]="categoria.descricao">
+                          <option *ngFor="let item of categoria.itens" [value]="item.uid">
+                            {{item.descricao}}
+                          </option>
+                        </optgroup>
+                      </select>
+                    </blockquote>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a *ngIf="authService.isAuthenticated()"
+         class="btn btn-primary"
+         style="margin-top: 1em"
+         routerLink="/servicos/novo"
+         routerLinkActive="active"
+         role="button">Quero publicar um serviço</a>
+
+    </div>
+  </form>
+
+  <div class="card-columns">
+    <app-servico-item
+      *ngFor="let servico of servicos"
+      [servico]="servico">
+    </app-servico-item>
+  </div>
+</div>
+

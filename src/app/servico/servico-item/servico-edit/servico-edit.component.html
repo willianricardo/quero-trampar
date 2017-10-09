@@ -1,0 +1,229 @@
+<div class="container detalhe">
+  <form [formGroup]="formulario" class="row" style="margin-top: 3em" (submit)="onSubmit()">
+    <div class="col-sm-3">
+      <div>
+        <img class="rounded img-fluid mx-auto"
+             [src]="'https://firebasestorage.googleapis.com/v0/b/querotrampar-1787d.appspot.com/o/icon-min.jpg?alt=media&token=694bbfde-4a41-40d9-9f8e-40b994981aa5'">
+      </div>
+      <div *ngIf="authService.isAuthenticated() && formulario.get('status').value === 'disponivel'">
+        <hr>
+        <button class="btn btn-block btn-outline-success btn-sm" type="submit">Salvar</button>
+        <button class="btn btn-block btn-outline-danger btn-sm" type="button" (click)="onReset()">Cancelar</button>
+      </div>
+      <hr>
+      <nav class="nav flex-column nav-pills" id="myTab">
+
+        <a class="btn-outline-dark nav-item nav-link active"
+           id="nav-servico-tab"
+           data-toggle="tab"
+           href="#nav-servico"
+           role="tab"
+           aria-controls="nav-servico">Dados Básicos</a>
+
+        <a class="btn-outline-dark nav-item nav-link"
+           id="nav-categorias-tab"
+           data-toggle="tab"
+           href="#nav-categorias"
+           role="tab"
+           aria-controls="nav-categorias">Áreas de Atuação</a>
+
+        <a class="btn-outline-dark nav-item nav-link"
+           id="nav-endereco-tab"
+           data-toggle="tab"
+           href="#nav-endereco"
+           role="tab"
+           aria-controls="nav-endereco">Endereço</a>
+
+        <a class="btn-outline-dark nav-item nav-link"
+           id="nav-observacao-tab"
+           data-toggle="tab"
+           href="#nav-observacao"
+           role="tab"
+           aria-controls="nav-observacao">Outras Informações</a>
+        <hr>
+
+      </nav>
+    </div>
+    <div class="col-sm-9">
+      <div *ngIf="erro" class="alert alert-danger" role="alert">
+        <button type="button" class="close" aria-label="Close" (click)="erro = null">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="alert-heading">{{erro.cabecalho}}</h4>
+
+        <p>{{erro.descricao}}</p>
+        <ul *ngIf="erro.itens.length">
+          <li *ngFor="let item of erro.itens"><strong>{{getDescricaoCampo(item.campo)}}</strong>
+            <ul>
+              <li *ngFor="let erro of item.erros">{{getDescricaoErro(erro)}}</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-servico" role="tabpanel" aria-labelledby="nav-servico-tab">
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Titulo</h5>
+            <input class="form-control" [ngClass]="aplicaCssErro('titulo')" formControlName="titulo">
+          </div>
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Descrição</h5>
+            <textarea rows="5" class="form-control" [ngClass]="aplicaCssErro('descricao')" formControlName="descricao"></textarea>
+          </div>
+
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Valor <small class="lead" style="font-style: italic">R$</small></h5>
+            <input type="number" min="0" class="form-control col-2" [ngClass]="aplicaCssErro('valor')" formControlName="valor">
+          </div>
+
+          <div class="form-group detalhe-form-group">
+            <div class="row">
+              <div *ngIf="formulario.get('dataPrevisao')" class="form-group col-4" style="margin-bottom: 0">
+                <h5 class="card-title">Data da Prestação de Serviço</h5>
+                <input type="date" class="form-control" formControlName="dataPrevisao">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="nav-categorias" role="tabpanel" aria-labelledby="nav-categorias-tab">
+          <div class="form-group detalhe-form-group">
+
+            <h5 class="card-title">Áreas de Atuação</h5>
+
+            <div class="form-group">
+              <div class="input-group col-sm-7" style="padding-left: 0">
+                <select class="form-control" #categoriaSelect>
+
+                  <option [value]="{'uid': 0, 'descricao': 'Selecione um serviço'} | json">
+                    Selecione um serviço
+                  </option>
+
+                  <optgroup *ngFor="let categoria of coreService.getCategorias()" [label]="categoria.descricao">
+                    <option *ngFor="let item of categoria.itens" [value]="item| json">
+                      {{item.descricao}}
+                    </option>
+                  </optgroup>
+
+                </select>
+
+                <span class="input-group-btn">
+                <button
+                  class="btn btn-success"
+                  type="button"
+                  (click)="adicionarCategoria(categoriaSelect.value)">
+                  Adicionar
+                </button>
+              </span>
+              </div>
+            </div>
+
+            <ng-template [ngIf]="!formulario.get('categorias')?.length">
+              <div class="alert alert-secondary" role="alert">
+                Nenhuma área de atuação informada
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="formulario.get('categorias')?.length">
+              <ul class="list-group col-sm-7">
+                <div formArrayName="categorias">
+                  <div *ngFor="let categoria of formulario.get('categorias').controls; let i=index">
+                    <div style="margin-bottom: 5px;">
+                      <div class="input-group" formGroupName="{{i}}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button"><i class="fa fa-star fa-1x"></i></button>
+                        </span>
+                        <li class="form-control list-group-item-action flex-column list-group-item-light"
+                            readonly>
+                          <strong>{{categoria.controls.descricao.value}}</strong>
+                        </li>
+                        <span class="input-group-btn">
+                          <button class="btn btn-danger" type="button" (click)="excluirCategoria(i)">Excluir</button>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ul>
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="nav-endereco" role="tabpanel" aria-labelledby="nav-endereco-tab">
+
+          <div class="form-group" formGroupName="endereco">
+            <div class="form-group detalhe-form-group">
+              <h4 class="form-control-label" style="padding-bottom: 0.5em">Endereço</h4>
+
+              <div class="row">
+                <div class="form-group col-9">
+                  <h5 class="form-control-label">Rua</h5>
+                  <input class="form-control" formControlName="rua">
+                </div>
+
+                <div class="form-group col-3">
+                  <h5 class="form-control-label">Numero</h5>
+                  <input class="form-control" formControlName="numero">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group col-5">
+                  <h5 class="form-control-label">Bairro</h5>
+                  <input class="form-control" formControlName="bairro">
+                </div>
+
+                <div class="form-group col-7">
+                  <h5 class="form-control-label">Complemento</h5>
+                  <input class="form-control" formControlName="complemento">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group col-sm-12">
+                  <h5 class="form-control-label">Cidade</h5>
+                  <input class="form-control" formControlName="cidade">
+                </div>
+
+                <div class="form-group col-3">
+                  <h5 class="form-control-label">CEP</h5>
+                  <input class="form-control" (blur)="consultaCEP()" formControlName="cep">
+                </div>
+
+                <div class="form-group col-3">
+                  <h5 class="form-control-label">Estado</h5>
+                  <select class="form-control" formControlName="estado">
+                    <option *ngFor="let estado of coreService.getEstados()" [value]="estado.uf">
+                      {{estado.nome}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!--<div class="form-group detalhe-form-group col-12">-->
+              <!--<h5 class="card-title">Localização</h5>-->
+              <!--<div id="maps"></div>-->
+            <!--</div>-->
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="nav-observacao" role="tabpanel" aria-labelledby="nav-observacao-tab">
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="form-control-label">
+              Observação
+            </h5>
+            <textarea rows="12" class="form-control" formControlName="observacao"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+

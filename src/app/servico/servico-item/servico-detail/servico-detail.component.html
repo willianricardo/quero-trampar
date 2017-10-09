@@ -1,0 +1,353 @@
+<div class="container detalhe">
+  <div class="row" style="margin-top: 3em">
+    <div class="col-sm-3">
+      <div>
+        <img class="rounded img-fluid mx-auto"
+             [src]="'https://firebasestorage.googleapis.com/v0/b/querotrampar-1787d.appspot.com/o/icon-min.jpg?alt=media&token=694bbfde-4a41-40d9-9f8e-40b994981aa5'">
+      </div>
+      <hr>
+      <button
+        type="button"
+        class="btn btn-block"
+        [ngClass]="coreService.aplicaCssStatusServico(servico.status)">{{coreService.getStatus(servico.status)}}
+      </button>
+
+      <div *ngIf="authService.isAuthenticated()">
+        <div *ngIf="servico.status === 'disponivel'">
+          <div *ngIf="!authService.isMe(servico.usuario)  && authService.getUsuarioLogado()?.autonomo">
+            <hr>
+            <div style="margin-top: 0.5em">
+              <button
+                class="btn btn-sm btn-block"
+                [ngClass]="{
+                    'btn-outline-danger': servicoService.isInscrito(servico.candidatos),
+                    'btn-outline-warning': !servicoService.isInscrito(servico.candidatos)
+                  }"
+                (click)="inscrever()">
+                <i class="fa fa-star fa-1x"></i>
+                {{servicoService.isInscrito(servico.candidatos)?'Deixar Interesse':'Tenho Interesse'}}
+              </button>
+            </div>
+
+            <div style="margin-top: 0.5em">
+              <button class="btn btn-sm btn-outline-info btn-block" data-toggle="modal" data-target="#enviarMensagem"
+                      data-whatever="@mdo">
+                Enviar Mensagem
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="authService.isMe(servico.usuario) || authService.isAdministrator()">
+            <hr>
+            <div style="margin-top: 0.5em">
+              <a class="btn btn-sm btn-block btn-outline-warning"
+                 routerLink="/servicos/{{servico.uid}}/alterar"
+                 routerLinkActive="active">
+                Alterar
+              </a>
+            </div>
+
+            <div style="margin-top: 0.5em">
+              <button
+                *ngIf="servico.status === 'disponivel'"
+                class="btn btn-block btn-sm btn-outline-danger"
+                type="button"
+                data-toggle="modal"
+                data-target="#cancelarServico"
+                data-whatever="@mdo">Cancelar Serviço
+              </button>
+            </div>
+
+            <div style="margin-top: 0.5em">
+              <button
+                *ngIf="servico.status === 'disponivel'"
+                class="btn btn-block btn-sm btn-outline-info"
+                type="button"
+                data-toggle="modal"
+                data-target="#finalizarServico"
+                data-whatever="@mdo">Finalizar Serviço
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+      <nav class="nav flex-column nav-pills" id="myTab">
+
+        <a class="btn-outline-dark nav-item nav-link active"
+           id="nav-servico-tab"
+           data-toggle="tab"
+           href="#nav-servico"
+           role="tab"
+           aria-controls="nav-servico">Dados Básicos</a>
+
+        <div *ngIf="authService.isAuthenticated()">
+
+          <a class="btn-outline-dark nav-item nav-link"
+             id="nav-categorias-tab"
+             data-toggle="tab"
+             href="#nav-categorias"
+             role="tab"
+             aria-controls="nav-categorias">Áreas de Atuação</a>
+
+          <a class="btn-outline-dark nav-item nav-link"
+             id="nav-endereco-tab"
+             data-toggle="tab"
+             href="#nav-endereco"
+             role="tab"
+             aria-controls="nav-endereco">Endereço</a>
+
+          <a *ngIf="authService.isMe(servico.usuario) || authService.isAdministrator()"
+             class="btn-outline-dark nav-item nav-link"
+             id="nav-candidatos-tab"
+             data-toggle="tab"
+             href="#nav-candidatos"
+             role="tab"
+             aria-controls="nav-candidatos">Profissionais Interessados</a>
+
+          <a class="btn-outline-dark nav-item nav-link"
+             id="nav-observacao-tab"
+             data-toggle="tab"
+             href="#nav-observacao"
+             role="tab"
+             aria-controls="nav-observacao">Outras Informações</a>
+        </div>
+
+        <hr>
+      </nav>
+    </div>
+    <div class="col-sm-9">
+      <ng-template [ngIf]="!authService.isAuthenticated()">
+        <div class="alert alert-info" role="alert">
+          <h4 class="alert-heading">Olá Visitante</h4>
+          <p>Para mais informações desse serviço, é necessário que você esteja
+            logado no site</p>
+          <p>Estando logado, você tem acesso à opção para se candidatar, assim como, visualizar dados do solicitante, áreas de
+            atuação, endereço e outras informações</p>
+          <hr>
+          <p class="mb-0"><a href="#/login" class="alert-link">Clique aqui!</a> para fazer login.</p>
+        </div>
+      </ng-template>
+
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-servico" role="tabpanel" aria-labelledby="nav-servico-tab">
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Titulo</h5>
+            <h3>{{servico.titulo | capitalize}}</h3>
+          </div>
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Descrição</h5>
+            <p class="lead">“{{servico.descricao}}”</p>
+          </div>
+
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Valor</h5>
+            <p class="lead">
+              {{servico.valor ? (servico.valor | currency:'BRL':true:'1.2-2') : 'À Combinar'}}
+            </p>
+          </div>
+
+          <div class="form-group detalhe-form-group">
+            <!--<div *ngIf="servico.dataPrevisao" class="form-group col-3" style="margin-bottom: 0px">-->
+            <!--<h5 class="card-title">Data de Cadastro</h5>-->
+            <!--<p class="lead">{{servico.dataCadastro | date:'dd/MM/yyyy'}}</p>-->
+            <!--</div>-->
+
+            <div *ngIf="servico.dataPrevisao" class="form-group col-5" style="margin-bottom: 0">
+              <h5 class="card-title">Data da Prestação de Serviço</h5>
+              <p class="lead">{{servico.dataPrevisao | date:'dd/MM/yyyy'}}</p>
+            </div>
+
+            <div *ngIf="servico.dataCancelamento" class="form-group col-5" style="margin-bottom: 0">
+              <h5 class="card-title">Data de Cancelamento</h5>
+              <p class="lead">{{servico.dataCancelamento | date:'dd/MM/yyyy'}}</p>
+            </div>
+
+            <div *ngIf="servico.dataConclusao" class="form-group col-5" style="margin-bottom: 0">
+              <h5 class="card-title">Data de Conclusão</h5>
+              <p class="lead">{{servico.dataConclusao | date:'dd/MM/yyyy'}}</p>
+            </div>
+          </div>
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Solicitante</h5>
+            <a [routerLink]="['/profissionais/'+servico.usuario]"
+               class="list-group-item-action flex-column align-items-start">
+              <p class="lead"><strong>{{usuario?.nome | capitalize}}</strong></p>
+            </a>
+          </div>
+
+
+        </div>
+
+        <div class="tab-pane fade" id="nav-categorias" role="tabpanel" aria-labelledby="nav-categorias-tab">
+          <div class="form-group detalhe-form-group">
+
+            <h5 class="card-title">Áreas de Atuação</h5>
+
+            <ng-template [ngIf]="!servico.categorias?.length">
+              <div class="alert alert-secondary" role="alert">
+                Nenhuma área de atuação informada
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="servico.categorias?.length">
+              <ul class="list-group col-sm-6">
+                <li style="padding: 0.5em;font-size: large"
+                    class="list-group-item list-group-item-light detalhe-item"
+                    *ngFor="let categoria of servico.categorias">
+                  <i class="fa fa-star fa-1x"></i>
+                  <strong>{{categoria.descricao}}</strong>
+                </li>
+              </ul>
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="nav-endereco" role="tabpanel" aria-labelledby="nav-endereco-tab">
+          <ng-template
+            [ngIf]="!servico.endereco?.rua && !servico.endereco?.cidade && !servico.endereco?.complemento && !servico.endereco?.maps.lat">
+            <h5 class="card-title">Endereço</h5>
+            <div class="alert alert-secondary" role="alert">
+              Endereço não informado
+            </div>
+          </ng-template>
+
+          <div *ngIf="servico.endereco?.rua"
+               class="form-group detalhe-form-group">
+            <h5 class="card-title">Endereço</h5>
+            <p class="lead"> {{servico.endereco?.rua}}{{servico.endereco?.numero?', '+
+              servico.endereco?.numero:''}} - {{servico.endereco?.bairro}}</p>
+          </div>
+
+          <div *ngIf="servico.endereco?.cidade"
+               class="form-group detalhe-form-group">
+            <h5 class="card-title">Cidade</h5>
+            <p class="lead"> {{servico.endereco?.cidade}}, {{servico.endereco?.cep}} -
+              {{servico.endereco?.estado | uppercase}}</p>
+          </div>
+
+          <div class="form-group detalhe-form-group" *ngIf="servico.endereco?.complemento">
+            <h5 class="card-title">Complemento</h5>
+            <p class="lead"> {{servico.endereco?.complemento}}</p>
+          </div>
+
+          <div *ngIf="servico.endereco?.maps.lat" class="form-group detalhe-form-group">
+            <h5 class="card-title">Localização</h5>
+            <div #maps id="maps"></div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="nav-candidatos" role="tabpanel"
+             aria-labelledby="nav-candidatos-tab">
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Profissionais Interessados</h5>
+
+            <ng-template [ngIf]="!servico.candidatos">
+              <div class="alert alert-secondary" role="alert">
+                Nenhum profissional com interesse por enquanto
+              </div>
+            </ng-template>
+
+            <ng-template [ngIf]="servico.candidatos">
+              <ul class="list-group col-sm-7">
+                <app-servico-candidato
+                  *ngFor="let profissional of coreService.getValuesFromObject(servico.candidatos)"
+                  [uid]="profissional">
+                </app-servico-candidato>
+              </ul>
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="nav-observacao" role="tabpanel" aria-labelledby="nav-observacao-tab">
+
+          <div class="form-group detalhe-form-group">
+            <h5 class="card-title">Observação</h5>
+            <p class="lead">“{{servico.observacao || 'Nenhuma observação disponível'}}”</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="enviarMensagem" tabindex="-1" role="dialog" aria-labelledby="enviarMensagemLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="enviarMensagemLabel">Enviar Mensagem</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="bottom_wrapper clearfix">
+          <div class="message_input_wrapper">
+              <textarea
+                #mensagemInput
+                class="message_input"
+                #mensagem
+                placeholder="Digite sua mensagem aqui..."></textarea>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="bottom_wrapper clearfix">
+          <div class="send_message" data-dismiss="modal" (click)="enviarMensagem(mensagem.value)">
+            <div class="icon"></div>
+            <div class="text">Enviar
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="cancelarServico" tabindex="-1" role="dialog" aria-labelledby="cancelarServicoLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content alert alert-danger">
+      <div class="modal-header">
+        <h5 class="modal-title alert-heading" id="cancelarServicoLabel">Atenção</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Deseja realmente cancelar esse Serviço?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+        <button class="btn btn-outline-danger" data-dismiss="modal" (click)="cancelar()">Cancelar Serviço</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="finalizarServico" tabindex="-1" role="dialog" aria-labelledby="finalizarServicoLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content alert alert-info">
+      <div class="modal-header">
+        <h5 class="modal-title alert-heading" id="finalizarServicoLabel">Atenção</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Deseja realmente finalizar esse Serviço?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+        <button class="btn btn-outline-info" data-dismiss="modal" (click)="finalizar()">Finalizar Serviço</button>
+      </div>
+    </div>
+  </div>
+</div>

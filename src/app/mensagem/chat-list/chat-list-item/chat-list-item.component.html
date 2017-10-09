@@ -1,0 +1,23 @@
+<a class="btn-outline-dark nav-item nav-link"
+   [routerLink]="['/mensagens/'+chat]"
+   (click)="marcarVisualizado()"
+   routerLinkActive="active"
+   role="tab">
+  <img
+    [src]="usuario?.foto||'https://firebasestorage.googleapis.com/v0/b/querotrampar-1787d.appspot.com/o/icon2-min.jpg?alt=media&token=83b326ee-cf9f-4228-8e39-e0fa0695f15c'"
+    [alt]="usuario?.nome"
+    class="avatarMensagem">
+
+  <small *ngIf="notificacao"><span class="badge badge-info pull-right">Nova</span></small>
+
+  <ng-template [ngIf]="servico?.titulo">
+    <strong>{{servico?.titulo.slice(0,15)+'...'}}</strong>
+    <br>
+    <small>{{usuario?.nome.slice(0,25)}}</small>
+  </ng-template>
+  <ng-template [ngIf]="!servico?.titulo">
+    <strong>{{usuario?.nome.slice(0,15)+'...'}}</strong>
+  </ng-template>
+
+</a>
+
