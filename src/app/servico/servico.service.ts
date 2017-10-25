@@ -78,11 +78,12 @@ export class ServicoService {
   getServicos() {
     return this.servicos.filter(
       servico => {
-        const busca = servico.titulo.search(new RegExp(this.filtro.busca, 'ig')) !== -1;
+        const titulo = servico.titulo.search(new RegExp(this.filtro.busca, 'ig')) !== -1;
+        const descricao = servico.descricao.search(new RegExp(this.filtro.busca, 'ig')) !== -1;
         const ativo = servico.status === 'disponivel';
         const cidade = this.filtro.cidade ? servico.endereco.ibge === this.filtro.cidade : true;
         const categoria = this.possuiCategoria(servico.categorias, this.filtro.categoria);
-        return busca && ativo && cidade && categoria;
+        return (titulo || descricao) && ativo && cidade && categoria;
       }
     );
   }

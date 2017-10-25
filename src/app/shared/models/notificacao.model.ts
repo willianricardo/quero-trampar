@@ -9,5 +9,5 @@ export class Notificacao {
   link: string;
   visualizado: boolean;
   descricao: string;
-  datahora: string;
+  timestamp: string;
 }
