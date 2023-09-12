@@ -6,6 +6,8 @@ Monografia apresentada como exigência para obtenção do grau de Bacharelado em
 
 O QueroTrampar é uma plataforma que conecta profissionais e solicitantes de serviços, proporcionando uma maneira fácil e eficiente de encontrar profissionais qualificados em sua região. Ele permite que os profissionais busquem oportunidades de trabalho, promovam seus serviços e interajam com os solicitantes. Ao mesmo tempo, os solicitantes podem publicar suas necessidades para que profissionais capacitados entrem em contato, facilitando o processo de negociação entre ambas as partes.
 
+A documentação completa do projeto pode ser encontrada [aqui](./docs/Monografia.pdf).
+
 ## Principais Funcionalidades
 
 - **Fazer Login:** Os usuários podem fazer login em suas contas usando suas credenciais.
