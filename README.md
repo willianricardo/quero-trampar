@@ -37,7 +37,7 @@ Siga as instruções abaixo para iniciar o projeto em sua máquina local:
 
 1. **Clone o Repositório:**
    ```
-   git clone https://github.com/willianricardoo/quero-trampar.git
+   git clone https://github.com/willianricardo/quero-trampar.git
    ```
 
 2. **Instale as Dependências:**
